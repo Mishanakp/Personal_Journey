@@ -26,10 +26,8 @@
       -webkit-tap-highlight-color: transparent; /* Removes touch blue highlight on iOS */
     }
 
-    html, body {
-      width: 100%;
-      min-height: 100vh;
-      min-height: -webkit-fill-available; /* iOS full height fix */
+    html {
+      height: 100%;
     }
 
     body {
@@ -38,10 +36,16 @@
       background-size: 400% 400%;
       animation: gradientBG 15s ease infinite;
       color: var(--text-color);
+      
+      /* Perfect Vertical and Horizontal Centering */
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: clamp(12px, 3vw, 24px);
+      min-height: 100vh;
+      min-height: -webkit-fill-available; /* iOS full height fix */
+      
+      padding: clamp(16px, 4vw, 24px);
       padding-top: max(20px, env(safe-area-inset-top));
       padding-bottom: max(20px, env(safe-area-inset-bottom));
       overflow-x: hidden;
@@ -67,7 +71,7 @@
       position: relative;
       border: 1px solid rgba(255, 255, 255, 0.8);
       z-index: 2;
-      margin: auto;
+      margin: 0 auto;
     }
 
     /* Screen Transitions */
@@ -368,27 +372,27 @@
       
       <div class="album-grid">
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=1" alt="Memory 1" class="polaroid-img" />
+          <img src="./assets/Random1.jpeg" alt="Memory 1" class="polaroid-img" />
           <div class="polaroid-caption">Where it all began</div>
         </div>
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=2" alt="Memory 2" class="polaroid-img" />
+          <img src="./assets/Random2.jpeg" alt="Memory 2" class="polaroid-img" />
           <div class="polaroid-caption">Your favorite smile</div>
         </div>
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=3" alt="Memory 3" class="polaroid-img" />
+          <img src="./assets/Random3.jpeg" alt="Memory 3" class="polaroid-img" />
           <div class="polaroid-caption">Unforgettable days</div>
         </div>
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=4" alt="Memory 4" class="polaroid-img" />
+          <img src="./assets/Random4.jpeg" alt="Memory 4" class="polaroid-img" />
           <div class="polaroid-caption">My safe place</div>
         </div>
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=5" alt="Memory 5" class="polaroid-img" />
+          <img src="./assets/Random5.jpeg" alt="Memory 5" class="polaroid-img" />
           <div class="polaroid-caption">Endless laughter</div>
         </div>
         <div class="polaroid">
-          <img src="https://picsum.photos/300/300?random=6" alt="Memory 6" class="polaroid-img" />
+          <img src="./assets/Random6.jpeg" alt="Memory 6" class="polaroid-img" />
           <div class="polaroid-caption">Forever & always</div>
         </div>
       </div>
