@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Prevents unwanted zooming on mobile input focus & respects notch safe areas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>A Special Journey For You</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color-1: #ffeef1;
+      --bg-color-2: #e0eafc;
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --primary-color: #e86162;
+      --primary-hover: #d24a4b;
+      --text-color: #4a4a4a;
+      --accent-color: #f3a683;
+      --shadow: 0 12px 30px rgba(232, 97, 98, 0.18);
+      --border-radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent; /* Removes touch blue highlight on iOS */
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      min-height: -webkit-fill-available; /* iOS full height fix */
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(-45deg, #ffeef1, #fde2e4, #e0eafc, #fcd5ce);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: clamp(12px, 3vw, 24px);
+      padding-top: max(20px, env(safe-area-inset-top));
+      padding-bottom: max(20px, env(safe-area-inset-bottom));
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 6vw, 40px) clamp(16px, 5vw, 32px);
+      text-align: center;
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      z-index: 2;
+      margin: auto;
+    }
+
+    /* Screen Transitions */
+    .screen {
+      display: none;
+      opacity: 0;
+      transform: translateY(16px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .screen.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .shake {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
+
+    @keyframes shake {
+      10%, 90% { transform: translate3d(-2px, 0, 0); }
+      20%, 80% { transform: translate3d(4px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+      40%, 60% { transform: translate3d(6px, 0, 0); }
+    }
+
+    h1, h2 {
+      font-family: 'Dancing Script', cursive;
+      color: var(--primary-color);
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    h1 { font-size: clamp(2.2rem, 7vw, 3rem); }
+    h2 { font-size: clamp(1.8rem, 6vw, 2.4rem); }
+
+    p {
+      margin-bottom: 20px;
+      font-size: clamp(0.9rem, 3.5vw, 1rem);
+      line-height: 1.5;
+      color: #666;
+    }
+
+    /* Lock / Input Styling - Mobile Scaled */
+    .lock-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(6px, 2vw, 12px);
+      margin: 24px 0;
+    }
+
+    .date-input {
+      width: clamp(52px, 16vw, 65px);
+      height: clamp(52px, 16vw, 65px);
+      font-size: clamp(1.2rem, 5vw, 1.6rem);
+      text-align: center;
+      border: 2px solid #ffd1d1;
+      border-radius: 14px;
+      outline: none;
+      background: #fff;
+      transition: all 0.25s ease;
+      font-weight: 600;
+      color: var(--primary-color);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .date-input#year {
+      width: clamp(70px, 22vw, 90px);
+    }
+
+    .date-input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 10px rgba(232, 97, 98, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .dash {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      color: var(--primary-color);
+      font-weight: bold;
+    }
+
+    /* Buttons with iOS Touch Target Standards (min 44px height) */
+    .btn {
+      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      color: white;
+      border: none;
+      min-height: 48px;
+      padding: 12px 32px;
+      font-size: clamp(0.95rem, 3.5vw, 1.05rem);
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 18px rgba(232, 97, 98, 0.3);
+      font-weight: 500;
+      width: 100%;
+      max-width: 280px;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      touch-action: manipulation;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .error-msg {
+      color: #e74c3c;
+      font-size: 0.88rem;
+      margin-top: 12px;
+      min-height: 20px;
+      font-weight: 500;
+    }
+
+    /* Quiz Styling */
+    .quiz-progress {
+      font-size: clamp(0.75rem, 3vw, 0.85rem);
+      color: #888;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-weight: 600;
+    }
+
+    .question-box {
+      font-size: clamp(1.05rem, 4vw, 1.2rem);
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: #333;
+      min-height: 52px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      background: white;
+      border: 2px solid #f0f0f0;
+      padding: clamp(12px, 3.5vw, 16px) clamp(14px, 4vw, 20px);
+      min-height: 48px;
+      border-radius: 14px;
+      cursor: pointer;
+      font-size: clamp(0.88rem, 3.5vw, 0.98rem);
+      text-align: left;
+      transition: all 0.25s ease;
+      color: #555;
+      touch-action: manipulation;
+      display: flex;
+      align-items: center;
+    }
+
+    .option-btn:active {
+      background: #fff3f3;
+      border-color: var(--primary-color);
+      transform: scale(0.99);
+    }
+
+    /* Aesthetic Photo Album Styling - Responsive Grid */
+    .album-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(10px, 3vw, 18px);
+      margin-top: 20px;
+    }
+
+    @media (max-width: 380px) {
+      .album-grid {
+        grid-template-columns: 1fr; /* Single column on very small phones */
+      }
+    }
+
+    .polaroid {
+      background: white;
+      padding: clamp(8px, 2vw, 12px) clamp(8px, 2vw, 12px) clamp(12px, 3vw, 18px) clamp(8px, 2vw, 12px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+      border-radius: 6px;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+
+    .polaroid:nth-child(odd) {
+      transform: rotate(-2deg);
+    }
+
+    .polaroid:nth-child(even) {
+      transform: rotate(2deg);
+    }
+
+    .polaroid:active, .polaroid:hover {
+      transform: scale(1.05) rotate(0deg) !important;
+      z-index: 10;
+      box-shadow: 0 12px 25px rgba(232, 97, 98, 0.25);
+    }
+
+    .polaroid-img {
+      width: 100%;
+      height: clamp(110px, 30vw, 160px);
+      object-fit: cover;
+      border-radius: 3px;
+      background: #eee;
+    }
+
+    .polaroid-caption {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(1rem, 3.8vw, 1.25rem);
+      margin-top: 8px;
+      color: #444;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Floating Hearts Background */
+    .heart {
+      position: fixed;
+      bottom: -20px;
+      font-size: 20px;
+      color: rgba(232, 97, 98, 0.6);
+      animation: floatUp 7s linear infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0.8);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-105vh) rotate(360deg) scale(1.2);
+        opacity: 0;
+      }
+    }
+
+    /* Burst Particle FX */
+    .burst-heart {
+      position: fixed;
+      pointer-events: none;
+      font-size: 22px;
+      animation: burst 0.8s ease-out forwards;
+      z-index: 100;
+    }
+
+    @keyframes burst {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="hearts-container"></div>
+
+  <div class="container" id="main-card">
+    
+    <!-- STAGE 1: PUZZLE LOCK -->
+    <div id="stage-puzzle" class="screen active">
+      <h1>Unlock Our Memory</h1>
+      <p>Enter the special date to unlock our next chapter.<br><i>Hint: DD - MM - YYYY</i></p>
+      
+      <div class="lock-container" id="lock-box">
+        <input type="tel" pattern="[0-9]*" id="day" class="date-input" maxlength="2" placeholder="DD" autofocus />
+        <span class="dash">-</span>
+        <input type="tel" pattern="[0-9]*" id="month" class="date-input" maxlength="2" placeholder="MM" />
+        <span class="dash">-</span>
+        <input type="tel" pattern="[0-9]*" id="year" class="date-input" maxlength="4" placeholder="YYYY" />
+      </div>
+      
+      <button class="btn" onclick="checkPuzzle(event)">Unlock Heart</button>
+      <div id="puzzle-error" class="error-msg"></div>
+    </div>
+
+    <!-- STAGE 2: QUIZ -->
+    <div id="stage-quiz" class="screen">
+      <div class="quiz-progress" id="quiz-progress">Question 1 of 10</div>
+      <div class="question-box" id="question-text">Loading question...</div>
+      <div class="options-grid" id="options-container"></div>
+    </div>
+
+    <!-- STAGE 3: FAIL SCREEN -->
+    <div id="stage-fail" class="screen">
+      <h2>Nice Try, Love!</h2>
+      <p id="fail-score-text"></p>
+      <p>You need to answer at least 5 questions correctly to reveal your final surprise.</p>
+      <button class="btn" onclick="restartQuiz()">Try Quiz Again</button>
+    </div>
+
+    <!-- STAGE 4: AESTHETIC ALBUM -->
+    <div id="stage-album" class="screen">
+      <h2>How Much You Mean To Me</h2>
+      <p id="success-score-text"></p>
+      
+      <div class="album-grid">
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=1" alt="Memory 1" class="polaroid-img" />
+          <div class="polaroid-caption">Where it all began</div>
+        </div>
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=2" alt="Memory 2" class="polaroid-img" />
+          <div class="polaroid-caption">Your favorite smile</div>
+        </div>
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=3" alt="Memory 3" class="polaroid-img" />
+          <div class="polaroid-caption">Unforgettable days</div>
+        </div>
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=4" alt="Memory 4" class="polaroid-img" />
+          <div class="polaroid-caption">My safe place</div>
+        </div>
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=5" alt="Memory 5" class="polaroid-img" />
+          <div class="polaroid-caption">Endless laughter</div>
+        </div>
+        <div class="polaroid">
+          <img src="https://picsum.photos/300/300?random=6" alt="Memory 6" class="polaroid-img" />
+          <div class="polaroid-caption">Forever & always</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --- STAGE 1: PUZZLE LOGIC ---
+    const TARGET_DATE = { day: "06", month: "01", year: "2020" };
+
+    const dayInput = document.getElementById('day');
+    const monthInput = document.getElementById('month');
+    const yearInput = document.getElementById('year');
+
+    // Auto focus movement compatible with iOS/Android numeric keypads
+    dayInput.addEventListener('input', () => { if (dayInput.value.length === 2) monthInput.focus(); });
+    monthInput.addEventListener('input', () => { if (monthInput.value.length === 2) yearInput.focus(); });
+
+    function checkPuzzle(e) {
+      const d = dayInput.value.trim();
+      const m = monthInput.value.trim();
+      const y = yearInput.value.trim();
+      const errorDiv = document.getElementById('puzzle-error');
+      const card = document.getElementById('main-card');
+
+      if (d === TARGET_DATE.day && m === TARGET_DATE.month && y === TARGET_DATE.year) {
+        errorDiv.textContent = "";
+        triggerBurst(e.clientX || window.innerWidth / 2, e.clientY || window.innerHeight / 2);
+        setTimeout(() => {
+          showScreen('stage-quiz');
+          loadQuestion();
+        }, 350);
+      } else {
+        errorDiv.textContent = "That's not the right date! Think back to our special day ❤️";
+        card.classList.remove('shake');
+        void card.offsetWidth;
+        card.classList.add('shake');
+      }
+    }
+
+    // --- STAGE 2: QUIZ LOGIC ---
+    const questions = [
+      {
+        question: "When I have a hard or tiring day, what is the single thing that brings me peace?",
+        options: ["Watching TV", "Hearing your voice or being near you", "Going for a run", "Eating fast food"],
+        correct: 1
+      },
+      {
+        question: "How does my world feel when you are not around for a long time?",
+        options: ["A bit quieter, but same", "Slightly boring", "Incomplete, like something vital is missing", "Normal"],
+        correct: 2
+      },
+      {
+        question: "What role do you play in my biggest achievements and dreams?",
+        options: ["You're my biggest cheerleader and inspiration", "You just watch from afar", "You don't care much", "You give critical advice only"],
+        correct: 0
+      },
+      {
+        question: "When I need to make a big life decision, whose opinion matters most to me?",
+        options: ["Random online forums", "Just my own", "Yours, because we are a team", "No one's"],
+        correct: 2
+      },
+      {
+        question: "What happens to my mood when you smile genuinely at me?",
+        options: ["Nothing changes", "It instantly brightens my whole day", "I get confused", "It's nice, but whatever"],
+        correct: 1
+      },
+      {
+        question: "How do you affect my perspective on the future?",
+        options: ["I don't think about the future", "You make the future feel safe and exciting", "It stays uncertain", "No change"],
+        correct: 1
+      },
+      {
+        question: "What is my favorite part about simple, ordinary days?",
+        options: ["Doing nothing at all", "That even boring moments are special with you", "Sleeping in late", "Finishing work early"],
+        correct: 1
+      },
+      {
+        question: "When I feel anxious or stressed, how do you help me most?",
+        options: ["By leaving me alone", "By offering comfort and grounding me", "By telling me to forget it", "By changing the topic"],
+        correct: 1
+      },
+      {
+        question: "How much of my happiness is connected to seeing you happy?",
+        options: ["A tiny bit", "Not connected at all", "Seeing you happy makes my heart completely full", "Only on weekends"],
+        correct: 2
+      },
+      {
+        question: "In short, what are you to me?",
+        options: ["Just a friend", "My partner, my home, and my favorite person", "Someone I hang out with", "A temporary companion"],
+        correct: 1
+      }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[currentQuestionIndex];
+      document.getElementById('quiz-progress').textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+      
+      const qText = document.getElementById('question-text');
+      qText.style.opacity = '0';
+      
+      setTimeout(() => {
+        qText.textContent = q.question;
+        qText.style.transition = 'opacity 0.3s ease';
+        qText.style.opacity = '1';
+      }, 100);
+
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      q.options.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = opt;
+        btn.onclick = (e) => selectOption(idx, e);
+        optionsContainer.appendChild(btn);
+      });
+    }
+
+    function selectOption(selectedIdx, event) {
+      if (selectedIdx === questions[currentQuestionIndex].correct) {
+        score++;
+        triggerBurst(event.clientX || window.innerWidth / 2, event.clientY || window.innerHeight / 2);
+      }
+
+      currentQuestionIndex++;
+      setTimeout(() => {
+        if (currentQuestionIndex < questions.length) {
+          loadQuestion();
+        } else {
+          finishQuiz();
+        }
+      }, 250);
+    }
+
+    function finishQuiz() {
+      if (score >= 5) {
+        document.getElementById('success-score-text').textContent = `You scored ${score} out of 10! You truly know how deeply loved you are.`;
+        showScreen('stage-album');
+      } else {
+        document.getElementById('fail-score-text').textContent = `You scored ${score} out of 10.`;
+        showScreen('stage-fail');
+      }
+    }
+
+    function restartQuiz() {
+      currentQuestionIndex = 0;
+      score = 0;
+      showScreen('stage-quiz');
+      loadQuestion();
+    }
+
+    // --- ANIMATION HELPERS ---
+    function showScreen(screenId) {
+      const activeScreen = document.querySelector('.screen.active');
+      if (activeScreen) {
+        activeScreen.classList.remove('active');
+      }
+      setTimeout(() => {
+        document.getElementById(screenId).classList.add('active');
+      }, 250);
+    }
+
+    // Continuous floating heart creator
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = ['❤️', '💖', '✨', '💕'][Math.floor(Math.random() * 4)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = Math.random() * 3 + 5 + 's';
+      heart.style.fontSize = Math.random() * 10 + 14 + 'px';
+      document.getElementById('hearts-container').appendChild(heart);
+
+      setTimeout(() => { heart.remove(); }, 7000);
+    }
+    setInterval(createHeart, 500);
+
+    // Click/Touch Burst Particle FX
+    function triggerBurst(x, y) {
+      const heartCount = 10;
+      for (let i = 0; i < heartCount; i++) {
+        const burst = document.createElement('div');
+        burst.className = 'burst-heart';
+        burst.innerHTML = '❤️';
+        burst.style.left = x + 'px';
+        burst.style.top = y + 'px';
+
+        const angle = (i / heartCount) * (2 * Math.PI);
+        const distance = Math.random() * 60 + 30;
+        const tx = Math.cos(angle) * distance + 'px';
+        const ty = Math.sin(angle) * distance + 'px';
+
+        burst.style.setProperty('--tx', tx);
+        burst.style.setProperty('--ty', ty);
+
+        document.body.appendChild(burst);
+        setTimeout(() => burst.remove(), 800);
+      }
+    }
+  </script>
+</body>
+</html>
